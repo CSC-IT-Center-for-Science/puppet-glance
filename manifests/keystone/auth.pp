@@ -22,6 +22,7 @@ class glance::keystone::auth(
   $email              = 'glance@localhost',
   $auth_name          = 'glance',
   $configure_endpoint = true,
+  $configure_user     = true,
   $service_type       = 'image',
   $public_address     = '127.0.0.1',
   $admin_address      = '127.0.0.1',
@@ -34,20 +35,25 @@ class glance::keystone::auth(
   $internal_protocol  = 'http'
 ) {
 
-  Keystone_user_role["${auth_name}@${tenant}"] ~> Service <| name == 'glance-registry' |>
-  Keystone_user_role["${auth_name}@${tenant}"] ~> Service <| name == 'glance-api' |>
-  Keystone_endpoint["${region}/${auth_name}"]  ~> Service <| name == 'glance-api' |>
-
-  keystone_user { $auth_name:
-    ensure   => present,
-    password => $password,
-    email    => $email,
-    tenant   => $tenant,
+  if $configure_user {
+    Keystone_user_role["${auth_name}@${tenant}"] ~> Service <| name == 'glance-registry' |>
+    Keystone_user_role["${auth_name}@${tenant}"] ~> Service <| name == 'glance-api' |>
   }
 
-  keystone_user_role { "${auth_name}@${tenant}":
-    ensure  => present,
-    roles   => 'admin',
+  Keystone_endpoint["${region}/${auth_name}"]  ~> Service <| name == 'glance-api' |>
+
+  if $configure_user {
+    keystone_user { $auth_name:
+      ensure   => present,
+      password => $password,
+      email    => $email,
+      tenant   => $tenant,
+    }
+
+    keystone_user_role { "${auth_name}@${tenant}":
+      ensure  => present,
+      roles   => 'admin',
+    }
   }
 
   keystone_service { $auth_name:
