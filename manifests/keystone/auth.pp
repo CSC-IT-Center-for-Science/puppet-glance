@@ -40,8 +40,6 @@ class glance::keystone::auth(
     Keystone_user_role["${auth_name}@${tenant}"] ~> Service <| name == 'glance-api' |>
   }
 
-  Keystone_endpoint["${region}/${auth_name}"]  ~> Service <| name == 'glance-api' |>
-
   if $configure_user {
     keystone_user { $auth_name:
       ensure   => present,
@@ -63,6 +61,8 @@ class glance::keystone::auth(
   }
 
   if $configure_endpoint {
+    Keystone_endpoint["${region}/${auth_name}"]  ~> Service <| name == 'glance-api' |>
+
     keystone_endpoint { "${region}/${auth_name}":
       ensure       => present,
       public_url   => "${public_protocol}://${public_address}:${port}",
