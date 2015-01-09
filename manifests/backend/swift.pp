@@ -23,10 +23,10 @@ class glance::backend::swift(
   $swift_store_auth_version = '2',
   $swift_store_large_object_size = '5120',
   $swift_store_create_container_on_put = false
+  $default store = true,
 ) {
 
   glance_api_config {
-    'glance_store/default_store':            value => 'swift';
     'glance_store/swift_store_user':         value => $swift_store_user;
     'glance_store/swift_store_key':          value => $swift_store_key;
     'glance_store/swift_store_auth_address': value => $swift_store_auth_address;
@@ -36,6 +36,12 @@ class glance::backend::swift(
       value => $swift_store_create_container_on_put;
     'DEFAULT/swift_store_large_object_size':
       value => $swift_store_large_object_size;
+  }
+
+  if $default_store {
+    glance_api_config {
+      'DEFAULT/default_store':            value => 'swift';
+    }
   }
 
   glance_cache_config {
