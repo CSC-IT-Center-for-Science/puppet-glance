@@ -60,6 +60,7 @@ class glance::backend::cinder(
   $cinder_catalog_info         = 'volume:cinder:publicURL',
   $cinder_endpoint_template    = undef,
   $cinder_http_retries         = '3'
+  $default_store               = true,
 
 ) {
 
@@ -67,8 +68,13 @@ class glance::backend::cinder(
     'DEFAULT/cinder_api_insecure':         value => $cinder_api_insecure;
     'DEFAULT/cinder_catalog_info':         value => $cinder_catalog_info;
     'DEFAULT/cinder_http_retries':         value => $cinder_http_retries;
-    'DEFAULT/default_store':               value => 'cinder';
     'DEFAULT/os_region_name':              value => $os_region_name;
+  }
+
+  if $default_store {
+    glance_api_config {
+     'DEFAULT/default_store':               value => 'cinder';
+    }
   }
 
   glance_cache_config {

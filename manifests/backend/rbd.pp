@@ -19,6 +19,7 @@ class glance::backend::rbd(
   $rbd_store_pool         = 'images',
   $rbd_store_chunk_size   = '8',
   $show_image_direct_url  = undef,
+  $default_store          = true,
 ) {
   include glance::params
 
@@ -27,11 +28,16 @@ class glance::backend::rbd(
   }
 
   glance_api_config {
-    'DEFAULT/default_store':          value => 'rbd';
     'DEFAULT/rbd_store_ceph_conf':    value => $rbd_store_ceph_conf;
     'DEFAULT/rbd_store_user':         value => $rbd_store_user;
     'DEFAULT/rbd_store_pool':         value => $rbd_store_pool;
     'DEFAULT/rbd_store_chunk_size':   value => $rbd_store_chunk_size;
+  }
+
+  if $default_store {
+    glance_api_config {
+      'DEFAULT/default_store':          value => 'rbd';
+    }
   }
 
   package { 'python-ceph':
