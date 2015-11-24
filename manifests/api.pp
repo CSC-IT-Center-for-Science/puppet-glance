@@ -7,6 +7,11 @@
 # [*keystone_password*]
 #   (required) Password used to authentication.
 #
+# [*package_ensure*]
+#   (optional) Ensure state for package. On RedHat platforms this
+#   setting is ignored and the setting from the glance class is used
+#   because there is only one glance package. Defaults to 'present'.
+#
 # [*verbose*]
 #   (optional) Rather to log the glance api service at verbose level.
 #   Default: false
@@ -90,7 +95,7 @@
 # [*pipeline*]
 #   (optional) Partial name of a pipeline in your paste configuration file with the
 #   service name removed.
-#   Defaults to 'keystone+cachemanagement'.
+#   Defaults to 'keystone'.
 #
 # [*keystone_tenant*]
 #   (optional) Tenant to authenticate to.
@@ -184,6 +189,7 @@
 #
 class glance::api(
   $keystone_password,
+  $package_ensure           = 'present',
   $verbose                  = false,
   $debug                    = false,
   $bind_host                = '0.0.0.0',
@@ -198,7 +204,7 @@ class glance::api(
   $auth_type                = 'keystone',
   $auth_uri                 = false,
   $identity_uri             = false,
-  $pipeline                 = 'keystone+cachemanagement',
+  $pipeline                 = 'keystone',
   $keystone_tenant          = 'services',
   $keystone_user            = 'glance',
   $manage_service           = true,
@@ -236,6 +242,7 @@ class glance::api(
   if ( $glance::params::api_package_name != $glance::params::registry_package_name ) {
     ensure_packages([$glance::params::api_package_name],
       {
+        ensure => $package_ensure,
         tag    => ['openstack'],
       }
     )

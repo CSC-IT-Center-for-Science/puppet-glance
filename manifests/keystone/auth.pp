@@ -1,25 +1,64 @@
+# == Class: glance::keystone::auth
 #
 # Sets up glance users, service and endpoint
 #
 # == Parameters:
 #
-#  $auth_name :: identifier used for all keystone objects related to glance.
-#    Optional. Defaults to glance.
-#  $password :: password for glance user. Optional. Defaults to glance_password.
-#  $configure_user :: Whether to configure a service user. Optional. Defaults to true.
-#  $configure_user_role :: Whether to configure the admin role for the service user.
-#    Optional. Defaults to true.
-#  $service_name :: name of the service. Optional. Defaults to value of auth_name.
-#  $service_type :: type of service to create. Optional. Defaults to image.
-#  $public_address :: Public address for endpoint. Optional. Defaults to 127.0.0.1.
-#  $admin_address :: Admin address for endpoint. Optional. Defaults to 127.0.0.1.
-#  $inernal_address :: Internal address for endpoint. Optional. Defaults to 127.0.0.1.
-#  $port :: Port for endpoint. Needs to match glance api service port. Optional.
-#    Defaults to 9292.
-#  $region :: Region where endpoint is set.
-#  $public_protocol :: Protocol for public endpoint. Optional. Defaults to http.
-#  $admin_protocol :: Protocol for admin endpoint. Optional. Defaults to http.
-#  $internal_protocol :: Protocol for internal endpoint. Optional. Defaults to http.
+# [*password*]
+#   Password for glance user. Required.
+#
+# [*email*]
+#   Email for glance user. Optional. Defaults to 'glance@localhost'.
+#
+# [*auth_name*]
+#   Username for glance service. Optional. Defaults to 'glance'.
+#
+# [*configure_endpoint*]
+#   Should glance endpoint be configured? Optional. Defaults to 'true'.
+#
+# [*configure_user*]
+#   Should the service user be configured? Optional. Defaults to 'true'.
+#
+# [*configure_user_role*]
+#   Should the admin role be configured for the service user?
+#   Optional. Defaults to 'true'.
+#
+# [*service_name*]
+#    Name of the service. Optional.
+#    Defaults to value of auth_name.
+#
+# [*service_type*]
+#    Type of service. Optional. Defaults to 'image'.
+#
+# [*public_address*]
+#    Public address for endpoint. Optional. Defaults to '127.0.0.1'.
+#
+# [*admin_address*]
+#    Admin address for endpoint. Optional. Defaults to '127.0.0.1'.
+#
+# [*internal_address*]
+#    Internal address for endpoint. Optional. Defaults to '127.0.0.1'.
+#
+# [*port*]
+#    Port for endpoint. Optional. Defaults to '9292'.
+#
+# [*region*]
+#    Region for endpoint. Optional. Defaults to 'RegionOne'.
+#
+# [*tenant*]
+#    Tenant for glance user. Optional. Defaults to 'services'.
+#
+# [*public_protocol*]
+#    Protocol for public endpoint. Optional. Defaults to 'http'.
+#
+# [*internal_protocol*]
+#    Protocol for internal endpoint. Optional. Defaults to 'http'.
+#
+# [*admin_protocol*]
+#    Protocol for admin endpoint. Optional. Defaults to 'http'.
+#
+# [*service_description*]
+#    Description for keystone service. Optional. Defaults to 'OpenStack Image Service''.
 #
 class glance::keystone::auth(
   $password,
@@ -38,7 +77,8 @@ class glance::keystone::auth(
   $tenant              = 'services',
   $public_protocol     = 'http',
   $admin_protocol      = 'http',
-  $internal_protocol   = 'http'
+  $internal_protocol   = 'http',
+  $service_description = 'OpenStack Image Service',
 ) {
 
   if $service_name == undef {
@@ -56,7 +96,7 @@ class glance::keystone::auth(
     configure_user_role => $configure_user_role,
     configure_endpoint  => $configure_endpoint,
     service_type        => $service_type,
-    service_description => 'OpenStack Image Service',
+    service_description => $service_description,
     service_name        => $real_service_name,
     region              => $region,
     password            => $password,
