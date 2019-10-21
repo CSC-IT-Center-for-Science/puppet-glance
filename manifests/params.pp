@@ -3,7 +3,7 @@
 class glance::params {
   include ::openstacklib::defaults
 
-  $client_package_name = 'python-glanceclient'
+  $client_package_name = 'python2-glanceclient'
 
   $cache_cleaner_command = 'glance-cache-cleaner'
   $cache_pruner_command  = 'glance-cache-pruner'
